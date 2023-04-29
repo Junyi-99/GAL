@@ -3,8 +3,12 @@ import torch.nn.functional as F
 from config import cfg
 from utils import recur
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import mean_squared_error
+# output: (10000, 10)
+# target: (10000)
 
-
+# output: (116203, 7)
+# target: (116203)
 def Accuracy(output, target, topk=1):
     with torch.no_grad():
         batch_size = target.size(0)
@@ -27,6 +31,9 @@ def MAD(output, target):
         mad = F.l1_loss(output, target).item()
     return mad
 
+def RMSE(output, target):
+    rmse = mean_squared_error(output, target, squared=False)
+    return rmse
 
 class Metric(object):
     def __init__(self, metric_name):
@@ -35,25 +42,29 @@ class Metric(object):
         self.metric = {'Loss': (lambda input, output: output['loss'].item()),
                        'Accuracy': (lambda input, output: recur(Accuracy, output['target'], input['target'])),
                        'MAD': (lambda input, output: recur(MAD, output['target'], input['target'])),
-                       'AUCROC': (lambda input, output: recur(AUCROC, output['target'], input['target']))}
+                       'AUCROC': (lambda input, output: recur(AUCROC, output['target'], input['target'])),}
+        
+        self.metric['RMSE'] = (lambda input, output: recur(RMSE, output['target'], input['target']))
 
     def make_metric_name(self, metric_name):
         for split in metric_name:
             if split == 'test':
                 if cfg['data_name'] in ['Blob', 'Iris', 'Wine', 'BreastCancer', 'QSAR', 'MNIST', 'CIFAR10',
-                                        'ModelNet40', 'ShapeNet55']:
+                                        'ModelNet40', 'ShapeNet55', 'CovType', 'Higgs', 'Gisette','Realsim','Epsilon', 'Letter', 'Radar']:
                     metric_name[split] += ['Accuracy']
                 elif cfg['data_name'] in ['MIMICM']:
                     metric_name[split] += ['AUCROC']
                 elif cfg['data_name'] in ['Diabetes', 'BostonHousing', 'MIMICL']:
                     metric_name[split] += ['MAD']
+                elif cfg['data_name'] in ['MSD']:
+                    metric_name[split] += ['RMSE']
                 else:
                     raise ValueError('Not valid data name')
         return metric_name
 
     def make_pivot(self):
         if cfg['data_name'] in ['Blob', 'Iris', 'Wine', 'BreastCancer', 'QSAR', 'MNIST', 'CIFAR10', 'ModelNet40',
-                                'ShapeNet55']:
+                                'ShapeNet55', 'CovType', 'Higgs', 'Gisette','Realsim','Epsilon', 'Letter', 'Radar']:
             pivot = -float('inf')
             pivot_name = 'Accuracy'
             pivot_direction = 'up'
@@ -64,6 +75,10 @@ class Metric(object):
         elif cfg['data_name'] in ['Diabetes', 'BostonHousing', 'MIMICL']:
             pivot = float('inf')
             pivot_name = 'MAD'
+            pivot_direction = 'down'
+        elif cfg['data_name'] in ['MSD']:
+            pivot = float('inf')
+            pivot_name = 'RMSE'
             pivot_direction = 'down'
         else:
             raise ValueError('Not valid data name')

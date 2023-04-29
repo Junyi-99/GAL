@@ -21,6 +21,8 @@ parser = argparse.ArgumentParser(description='cfg')
 for k in cfg:
     exec('parser.add_argument(\'--{0}\', default=cfg[\'{0}\'], type=type(cfg[\'{0}\']))'.format(k))
 parser.add_argument('--control_name', default=None, type=str)
+parser.add_argument('--splitter', default="corr", type=str) # corr, imp
+parser.add_argument('--weight', default="0.3", type=str)
 args = vars(parser.parse_args())
 for k in cfg:
     cfg[k] = args[k]
@@ -30,12 +32,13 @@ if args['control_name']:
 cfg['control_name'] = '_'.join(
     [cfg['control'][k] for k in cfg['control'] if cfg['control'][k]]) if 'control' in cfg else ''
 
+cfg['splitter'], cfg['weight'] = args['splitter'], args['weight']
 
 def main():
     process_control()
     seeds = list(range(cfg['init_seed'], cfg['init_seed'] + cfg['num_experiments']))
     for i in range(cfg['num_experiments']):
-        model_tag_list = [str(seeds[i]), cfg['data_name'], cfg['model_name'], cfg['control_name']]
+        model_tag_list = [str(seeds[i]), cfg['data_name'], cfg['model_name'], cfg['control_name'], cfg['splitter'], cfg['weight']]
         cfg['model_tag'] = '_'.join([x for x in model_tag_list if x])
         print('Experiment: {}'.format(cfg['model_tag']))
         runExperiment()
@@ -46,7 +49,7 @@ def runExperiment():
     cfg['seed'] = int(cfg['model_tag'].split('_')[0])
     torch.manual_seed(cfg['seed'])
     torch.cuda.manual_seed(cfg['seed'])
-    dataset = fetch_dataset(cfg['data_name'])
+    dataset = fetch_dataset(cfg['data_name'], args)
     process_dataset(dataset)
     feature_split = split_dataset(cfg['num_users'])
     assist = Assist(feature_split)

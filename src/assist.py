@@ -137,7 +137,8 @@ class Assist:
             if cfg['assist_rate_mode'] == 'search':
                 input = {'history': self.organization_output[iter - 1]['train'],
                          'output': self.organization_output[iter]['train'],
-                         'target': self.organization_target[0]['train']}
+                         'target': self.organization_target[0]['train'],
+                         'dataset': cfg['data_name']}
                 input = to_device(input, cfg['device'])
                 model = models.linesearch().to(cfg['device'])
                 model.train(True)
@@ -155,7 +156,12 @@ class Assist:
                 self.assist_rates[iter] = cfg['linesearch']['lr']
         with torch.no_grad():
             for split in organization_outputs[0]:
-                self.organization_output[iter][split] = self.organization_output[iter - 1][split] + self.assist_rates[
+                if cfg['data_name'] in ['Epsilon', 'Realsim', 'Gisette', 'Higgs']: # 二分类问题
+                    data = self.organization_output[iter - 1][split] + self.assist_rates[iter] * self.organization_output[iter][split]
+                    sum = torch.sum(data, dim=1).unsqueeze(1)
+                    self.organization_output[iter][split] = data / sum
+                else:
+                    self.organization_output[iter][split] = self.organization_output[iter - 1][split] + self.assist_rates[
                     iter] * self.organization_output[iter][split]
         return
 
@@ -169,7 +175,8 @@ class Assist:
             if cfg['assist_rate_mode'] == 'search':
                 input = {'history': self.organization_output[iter - 1]['train'],
                          'output': self.organization_output[iter]['train'],
-                         'target': self.organization_target[0]['train']}
+                         'target': self.organization_target[0]['train'],
+                         'dataset': cfg['data_name']}
                 input = to_device(input, cfg['device'])
                 model = models.linesearch().to(cfg['device'])
                 model.train(True)

@@ -37,11 +37,13 @@ def denormalize(input):
 
 def feature_split(input, feature_split):
     if cfg['data_name'] in ['Blob', 'Iris', 'Diabetes', 'BostonHousing', 'Wine', 'BreastCancer', 'QSAR', 'MIMICL',
-                            'MIMICM']:
+                            'MIMICM', 
+                            
+                            'MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
         mask = torch.zeros(input.size(-1), device=input.device)
         mask[feature_split] = 1
         output = torch.masked_fill(input, mask == 0, 0)
-    elif cfg['data_name'] in ['MNIST', 'CIFAR10']:
+    elif cfg['data_name'] in ['MNIST', 'CIFAR10', 'CovType']:
         num_features = np.prod(cfg['data_shape']).item()
         mask = torch.zeros(num_features, device=input.device)
         mask[feature_split] = 1
@@ -56,11 +58,18 @@ def feature_split(input, feature_split):
 
 
 def loss_fn(output, target, reduction='mean', loss_mode=None):
+    
     if target.dtype == torch.int64:
         if cfg['data_name'] in ['MIMICM']:
             if len(output.size()) == 3:
                 output = output.permute(0, 2, 1)
             loss = F.cross_entropy(output, target, reduction=reduction, ignore_index=-65535)
+        elif cfg['data_name'] in ['Epsilon', 'Realsim', 'Gisette', 'Higgs']:
+            # output 是一个形状为 [N, 2] 的输出张量，target 是形状为 [N] 的目标张量
+            target = target.unsqueeze(1)  # 在第二个维度上增加一维，得到形状为 [N, 1]
+            target = torch.cat([1 - target, target], dim=1)  # 将目标转化为 one-hot 编码，得到形状为 [N, 2]
+            target = target.to(torch.float32)  # 将目标转化为浮点数类型
+            loss = F.binary_cross_entropy(output, target, reduction=reduction)
         else:
             loss = F.cross_entropy(output, target, reduction=reduction)
     else:
@@ -105,7 +114,7 @@ def loss_fn(output, target, reduction='mean', loss_mode=None):
                         loss = (output - target).abs().pow(1.5).sum()
                     else:
                         loss = (output - target).abs().pow(1.5).mean()
-                elif loss_mode == 'l2':
+                elif loss_mode == 'l2': # 正在用的
                     loss = F.mse_loss(output, target, reduction=reduction)
                 elif loss_mode == 'l4':
                     if reduction == 'sum':

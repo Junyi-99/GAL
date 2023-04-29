@@ -7,16 +7,17 @@ from .late import late
 from .dl import dl
 
 
-class Linear(nn.Module):
+class Classifier(nn.Module):
     def __init__(self, data_shape, target_size):
         super().__init__()
         input_size = np.prod(data_shape).item()
         self.linear1 = nn.Linear(input_size, 100)
-        self.relu = nn.ReLU()
+        self.relu1 = nn.ReLU()
         self.linear2 = nn.Linear(100, 100)
+        self.relu2 = nn.ReLU()
         self.linear3 = nn.Linear(100, target_size)
-        self.sigmoid = nn.Sigmoid()
-
+        self.softmax = nn.Softmax(dim=1)
+        
     def feature(self, input):
         x = input['data']
         x = normalize(x)
@@ -24,15 +25,14 @@ class Linear(nn.Module):
             x = feature_split(x, input['feature_split'])
         x = x.view(x.size(0), -1)
         x = self.linear1(x)
-        x = self.relu(x)
+        x = self.relu1(x)
         x = self.linear2(x)
-        x = self.relu(x)
+        x = self.relu2(x)
         x = self.linear3(x)
-        x = self.sigmoid(x)
-        
+        # x = self.softmax(x)
         return x
 
-    def forward(self, input):
+    def forward(self, input): # target is one element: 0,1,2,3,4,5,6
         output = {}
         x = input['data']
         x = normalize(x)
@@ -42,12 +42,12 @@ class Linear(nn.Module):
         x = x.view(x.size(0), -1)
         
         x = self.linear1(x)
-        x = self.relu(x)
+        x = self.relu1(x)
         x = self.linear2(x)
-        x = self.relu(x)
+        x = self.relu2(x)
         x = self.linear3(x)
-        x = self.sigmoid(x)
-
+        # x = self.softmax(x)
+        
         output['target'] = x
         if 'target' in input:
             if 'loss_mode' in input:
@@ -57,16 +57,16 @@ class Linear(nn.Module):
         return output
 
 
-def linear():
+def classifier():
     data_shape = cfg['data_shape']
     target_size = cfg['target_size']
     if cfg['assist_mode'] == 'late':
-        model = late(Linear(data_shape, target_size))
+        model = late(Classifier(data_shape, target_size))
     elif cfg['assist_mode'] in ['none', 'bag', 'stack']:
         if 'dl' in cfg and cfg['dl'] == '1':
-            model = dl(Linear(data_shape, target_size), target_size)
+            model = dl(Classifier(data_shape, target_size), target_size)
         else:
-            model = Linear(data_shape, target_size)
+            model = Classifier(data_shape, target_size)
     else:
         raise ValueError('Not valid assist mode')
     model.apply(init_param)
