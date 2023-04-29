@@ -156,12 +156,7 @@ class Assist:
                 self.assist_rates[iter] = cfg['linesearch']['lr']
         with torch.no_grad():
             for split in organization_outputs[0]:
-                if cfg['data_name'] in ['Epsilon', 'Realsim', 'Gisette', 'Higgs']: # 二分类问题
-                    data = self.organization_output[iter - 1][split] + self.assist_rates[iter] * self.organization_output[iter][split]
-                    sum = torch.sum(data, dim=1).unsqueeze(1)
-                    self.organization_output[iter][split] = data / sum
-                else:
-                    self.organization_output[iter][split] = self.organization_output[iter - 1][split] + self.assist_rates[
+                self.organization_output[iter][split] = self.organization_output[iter - 1][split] + self.assist_rates[
                     iter] * self.organization_output[iter][split]
         return
 

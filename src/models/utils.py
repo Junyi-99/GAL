@@ -64,12 +64,6 @@ def loss_fn(output, target, reduction='mean', loss_mode=None):
             if len(output.size()) == 3:
                 output = output.permute(0, 2, 1)
             loss = F.cross_entropy(output, target, reduction=reduction, ignore_index=-65535)
-        elif cfg['data_name'] in ['Epsilon', 'Realsim', 'Gisette', 'Higgs']:
-            # output 是一个形状为 [N, 2] 的输出张量，target 是形状为 [N] 的目标张量
-            target = target.unsqueeze(1)  # 在第二个维度上增加一维，得到形状为 [N, 1]
-            target = torch.cat([1 - target, target], dim=1)  # 将目标转化为 one-hot 编码，得到形状为 [N, 2]
-            target = target.to(torch.float32)  # 将目标转化为浮点数类型
-            loss = F.binary_cross_entropy(output, target, reduction=reduction)
         else:
             loss = F.cross_entropy(output, target, reduction=reduction)
     else:

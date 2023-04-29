@@ -10,13 +10,7 @@ class LineSearch(nn.Module):
 
     def forward(self, input):
         output = {}
-        if(input['dataset'] in ['Epsilon', 'Realsim', 'Gisette', 'Higgs']):
-            lossin = input['history'] + self.assist_rate * input['output']
-            sum = torch.sum(lossin, dim=1).unsqueeze(1)
-            lossin = lossin / sum
-            output['loss'] = loss_fn(lossin, input['target'])
-        else:
-            output['loss'] = loss_fn(input['history'] + self.assist_rate * input['output'], input['target'])
+        output['loss'] = loss_fn(input['history'] + self.assist_rate * input['output'], input['target'])
         return output
 
 
