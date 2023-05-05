@@ -29,8 +29,8 @@ def fetch_dataset(data_name, args, verbose=True):
         dataset['train'] = eval('datasets.{}(root=root, split=\'train\')'.format(data_name))
         dataset['test'] = eval('datasets.{}(root=root, split=\'test\')'.format(data_name))
     elif data_name in ['MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
-        dataset['train'] = eval(f"datasets.{data_name}(root=root, split='train', typ='{args['splitter']}', val='{args['weight']}')")
-        dataset['test'] = eval(f"datasets.{data_name}(root=root, split='test', typ='{args['splitter']}', val='{args['weight']}')")
+        dataset['train'] = eval(f"datasets.{data_name}(root=root, split='train', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}')")
+        dataset['test'] = eval(f"datasets.{data_name}(root=root, split='test', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}')")
     else:
         raise ValueError('Not valid dataset name')
     if verbose:
@@ -60,7 +60,7 @@ def make_data_loader(dataset, tag, shuffle=None):
     return data_loader
 
 
-def split_dataset(num_users):
+def split_dataset(num_users, dataset):
     if cfg['data_name'] in ['Blob', 'Iris', 'Diabetes', 'BostonHousing', 'Wine', 'BreastCancer', 'QSAR', 'ModelNet40',
                             'ShapeNet55']:
         num_features = cfg['data_shape'][-1]
@@ -86,62 +86,13 @@ def split_dataset(num_users):
                                  cfg['data_shape'][2] // n_w).permute(1, 3, 0, 2, 4).reshape(
             -1, cfg['data_shape'][0], cfg['data_shape'][1] // n_h, cfg['data_shape'][2] // n_w)
         feature_split = list(feature_split.reshape(feature_split.size(0), -1))
-    elif cfg['data_name'] in ['MSD']:
-        # 4个party分别有24，22，22，22个 feature
+    elif cfg['data_name'] in ['MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
+        p = dataset.partitions
         feature_split = [
-            torch.arange(0, 24, dtype=torch.int),
-            torch.arange(24, 46, dtype=torch.int),             
-            torch.arange(46, 68, dtype=torch.int),
-            torch.arange(68, 90, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['CovType']:
-        feature_split = [
-            torch.arange(0, 15, dtype=torch.int),
-            torch.arange(15, 28, dtype=torch.int),
-            torch.arange(28, 41, dtype=torch.int),
-            torch.arange(41, 54, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Higgs']:
-        feature_split = [
-            torch.arange(0, 7, dtype=torch.int),
-            torch.arange(7, 14, dtype=torch.int),
-            torch.arange(14, 21, dtype=torch.int),
-            torch.arange(21, 28, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Gisette']:
-        feature_split = [
-            torch.arange(0, 1250, dtype=torch.int),
-            torch.arange(1250, 2500, dtype=torch.int),
-            torch.arange(2500, 3750, dtype=torch.int),
-            torch.arange(3750, 5000, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Realsim']:
-        feature_split = [
-            torch.arange(0, 5241, dtype=torch.int),
-            torch.arange(5241, 10480, dtype=torch.int),
-            torch.arange(10480, 15719, dtype=torch.int),
-            torch.arange(15719, 20958, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Epsilon']: 
-        feature_split = [
-            torch.arange(0, 500, dtype=torch.int),
-            torch.arange(500, 1000, dtype=torch.int),
-            torch.arange(1000, 1500, dtype=torch.int),
-            torch.arange(1500, 2000, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Letter']:
-        feature_split = [
-            torch.arange(0, 4, dtype=torch.int),
-            torch.arange(4, 8, dtype=torch.int),
-            torch.arange(8, 12, dtype=torch.int),
-            torch.arange(12, 16, dtype=torch.int)
-        ]
-    elif cfg['data_name'] in ['Radar']:
-        feature_split = [
-            torch.arange(0, 45, dtype=torch.int),
-            torch.arange(45, 88, dtype=torch.int),
-            torch.arange(88, 131, dtype=torch.int),
-            torch.arange(131, 174, dtype=torch.int)
+            torch.arange(sum(p[:0]) , sum(p[: 1]), dtype=torch.int),
+            torch.arange(sum(p[:1]) , sum(p[: 2]), dtype=torch.int),             
+            torch.arange(sum(p[:2]) , sum(p[: 3]), dtype=torch.int),
+            torch.arange(sum(p[:3]) , sum(p[: 4]), dtype=torch.int)
         ]
     else:
         raise ValueError('Not valid data name')

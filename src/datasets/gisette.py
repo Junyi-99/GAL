@@ -6,7 +6,7 @@ import sys
 from os.path import dirname, abspath
 
 
-def get_dataset(party_id:int, typ:str, value:str, train: str):
+def get_dataset(party_id:int, typ:str, value:str, train: str, dataseed: str):
 
     if typ =="corr":
         value = "beta" + value
@@ -17,9 +17,9 @@ def get_dataset(party_id:int, typ:str, value:str, train: str):
     
     fname = ""
     if train == "train":
-        fname = f"gisette_party4-{party_id}_{typ}_{value}_seed0_train.pkl"
+        fname = f"gisette_party4-{party_id}_{typ}_{value}_seed{dataseed}_train.pkl"
     else:
-        fname = f"gisette_party4-{party_id}_{typ}_{value}_seed0_test.pkl"
+        fname = f"gisette_party4-{party_id}_{typ}_{value}_seed{dataseed}_test.pkl"
     
     dir_path = dirname(dirname(abspath(__file__)))
     sys.path.append(dir_path + "/vertibench")
@@ -28,7 +28,7 @@ def get_dataset(party_id:int, typ:str, value:str, train: str):
 
 class Gisette(Dataset):
     # 二分类任务
-    def __init__(self, root, split, typ: str, val:str) -> None:
+    def __init__(self, root, split, typ: str, val:str, dataseed: str) -> None:
         super().__init__()
         self.root = os.path.expanduser(root)
         self.split = split
@@ -38,11 +38,16 @@ class Gisette(Dataset):
 
 
         self.parties = [None, None, None, None]
-        self.parties[0] = get_dataset(0, typ, val, split) # (4800,1250)
-        self.parties[1] = get_dataset(1, typ, val, split) # (4800,1250)
-        self.parties[2] = get_dataset(2, typ, val, split) # (4800,1250)
-        self.parties[3] = get_dataset(3, typ, val, split) # (4800,1250)
-        
+        self.parties[0] = get_dataset(0, typ, val, split, dataseed) # (4800,1250)
+        self.parties[1] = get_dataset(1, typ, val, split, dataseed) # (4800,1250)
+        self.parties[2] = get_dataset(2, typ, val, split, dataseed) # (4800,1250)
+        self.parties[3] = get_dataset(3, typ, val, split, dataseed) # (4800,1250)
+        self.partitions = [
+            self.parties[0].X.shape[1],
+            self.parties[1].X.shape[1],
+            self.parties[2].X.shape[1],
+            self.parties[3].X.shape[1]
+        ]
         self.key = list(torch.tensor(self.parties[0].key).clone().detach())
         self.y = torch.tensor(self.parties[0].y, dtype=torch.int64).clone().detach()
         self.X = torch.cat([torch.tensor(self.parties[0].X).clone().detach(),

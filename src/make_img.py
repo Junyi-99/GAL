@@ -36,7 +36,7 @@ def main():
     img = next(iter(data_loader['train']))['data'][0]
     M = [1, 2, 4, 8]
     for num_user in M:
-        feature_split = split_dataset(num_user)
+        feature_split = split_dataset(num_user, dataset)
         for i in range(num_user):
             num_features = np.prod(cfg['data_shape']).item()
             mask = torch.zeros(num_features, device=img.device)

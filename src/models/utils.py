@@ -43,7 +43,7 @@ def feature_split(input, feature_split):
         mask = torch.zeros(input.size(-1), device=input.device)
         mask[feature_split] = 1
         output = torch.masked_fill(input, mask == 0, 0)
-    elif cfg['data_name'] in ['MNIST', 'CIFAR10', 'CovType']:
+    elif cfg['data_name'] in ['MNIST', 'CIFAR10']:
         num_features = np.prod(cfg['data_shape']).item()
         mask = torch.zeros(num_features, device=input.device)
         mask[feature_split] = 1
@@ -58,7 +58,6 @@ def feature_split(input, feature_split):
 
 
 def loss_fn(output, target, reduction='mean', loss_mode=None):
-    
     if target.dtype == torch.int64:
         if cfg['data_name'] in ['MIMICM']:
             if len(output.size()) == 3:
@@ -108,7 +107,7 @@ def loss_fn(output, target, reduction='mean', loss_mode=None):
                         loss = (output - target).abs().pow(1.5).sum()
                     else:
                         loss = (output - target).abs().pow(1.5).mean()
-                elif loss_mode == 'l2': # 正在用的
+                elif loss_mode == 'l2':
                     loss = F.mse_loss(output, target, reduction=reduction)
                 elif loss_mode == 'l4':
                     if reduction == 'sum':

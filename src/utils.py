@@ -126,7 +126,6 @@ def process_control():
                    'CovType': [54], 'MSD': [90],'Higgs': [28], 'Gisette': [5000], 'Realsim':[20958],'Epsilon':[2000], 'Letter': [16], 'Radar':[174]}
     cfg['data_shape'] = data_shape[cfg['data_name']]
     cfg['linear'] = {}
-    cfg['binclassifier'] = {}
     cfg['classifier'] = {}
     cfg['conv'] = {'hidden_size': [64, 128, 256, 512]}
     cfg['lstm'] = {'hidden_size': 128, 'num_layers': 1}
@@ -189,29 +188,19 @@ def process_control():
     if model_name in ['linear']:
         cfg[model_name]['optimizer_name'] = 'SGD'
         cfg[model_name]['momentum'] = 0.9
-        cfg[model_name]['weight_decay'] = 5e-8
+        cfg[model_name]['weight_decay'] = 5e-4
         cfg[model_name]['batch_size'] = {'train': 1024, 'test': 1024}
-        cfg[model_name]['lr'] = 1
+        cfg[model_name]['lr'] = 0.1
         cfg[model_name]['num_epochs'] = cfg['local_epoch']
         cfg[model_name]['scheduler_name'] = 'MultiStepLR'
         cfg[model_name]['factor'] = 0.1
         cfg[model_name]['milestones'] = [50, 100]
     elif model_name in ['classifier']:
-        cfg[model_name]['optimizer_name'] = 'Adam'
-        cfg[model_name]['momentum'] = 0.9
-        cfg[model_name]['weight_decay'] = 5e-10
-        cfg[model_name]['batch_size'] = {'train': 512, 'test': 512}
-        cfg[model_name]['lr'] = 0.01
-        cfg[model_name]['num_epochs'] = cfg['local_epoch']
-        cfg[model_name]['scheduler_name'] = 'MultiStepLR'
-        cfg[model_name]['factor'] = 0.1
-        cfg[model_name]['milestones'] = [50, 100]
-    elif model_name in ['binclassifier']:
-        cfg[model_name]['optimizer_name'] = 'Adam'
-        cfg[model_name]['momentum'] = 0.9
-        cfg[model_name]['weight_decay'] = 5e-4
-        cfg[model_name]['batch_size'] = {'train': 512, 'test': 512}
-        cfg[model_name]['lr'] = 0.01
+        cfg[model_name]['optimizer_name'] = os.environ.get("OPTIMIZER", "Adam")
+        cfg[model_name]['momentum'] = float(os.environ.get("MOMENTUM", "0.9"))
+        cfg[model_name]['weight_decay'] = float(os.environ.get("WEIGHT_DECAY", "5e-4"))
+        cfg[model_name]['batch_size'] = {'train': int(os.environ.get("BATCH_SIZE", "512")), 'test': int(os.environ.get("BATCH_SIZE", "512"))}
+        cfg[model_name]['lr'] = float(os.environ.get("LR", "0.01"))
         cfg[model_name]['num_epochs'] = cfg['local_epoch']
         cfg[model_name]['scheduler_name'] = 'MultiStepLR'
         cfg[model_name]['factor'] = 0.1

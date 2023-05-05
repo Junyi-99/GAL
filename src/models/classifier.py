@@ -11,12 +11,24 @@ class Classifier(nn.Module):
     def __init__(self, data_shape, target_size):
         super().__init__()
         input_size = np.prod(data_shape).item()
-        self.linear1 = nn.Linear(input_size, 100)
-        self.relu1 = nn.ReLU()
-        self.linear2 = nn.Linear(100, 100)
-        self.relu2 = nn.ReLU()
-        self.linear3 = nn.Linear(100, target_size)
-        self.softmax = nn.Softmax(dim=1)
+        self.linear = nn.Sequential(
+            nn.Linear(input_size, 100),
+            nn.ReLU(),
+            nn.Linear(100, 100),
+            nn.ReLU(),
+            nn.Linear(100, target_size),
+            nn.Softmax(dim=1)
+        )
+        # self.linear1 = nn.Linear(input_size, 100)
+        # self.relu = nn.ReLU()
+        # self.linear2 = nn.Linear(100, 100)
+        # self.relu2 = nn.ReLU()
+        # self.linear3 = nn.Linear(100, 100)
+        # self.relu2 = nn.ReLU()
+        # self.linear4 = nn.Linear(100, 100)
+        # self.relu2 = nn.ReLU()
+        # self.linear5 = nn.Linear(100, target_size)
+        # self.softmax = nn.Softmax(dim=1)
         
     def feature(self, input):
         x = input['data']
@@ -24,12 +36,7 @@ class Classifier(nn.Module):
         if 'feature_split' in input:
             x = feature_split(x, input['feature_split'])
         x = x.view(x.size(0), -1)
-        x = self.linear1(x)
-        x = self.relu1(x)
-        x = self.linear2(x)
-        x = self.relu2(x)
-        x = self.linear3(x)
-        # x = self.softmax(x)
+        x = self.linear(x)
         return x
 
     def forward(self, input): # target is one element: 0,1,2,3,4,5,6
@@ -41,12 +48,7 @@ class Classifier(nn.Module):
             x = feature_split(x, input['feature_split'])
         x = x.view(x.size(0), -1)
         
-        x = self.linear1(x)
-        x = self.relu1(x)
-        x = self.linear2(x)
-        x = self.relu2(x)
-        x = self.linear3(x)
-        # x = self.softmax(x)
+        x = self.linear(x)
         
         output['target'] = x
         if 'target' in input:

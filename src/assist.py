@@ -48,7 +48,7 @@ class Assist:
         return organization
 
     def broadcast(self, dataset, iter):
-        for split in dataset:
+        for split in dataset: # split: train, test
             self.organization_output[iter - 1][split].requires_grad = True
             loss = models.loss_fn(self.organization_output[iter - 1][split],
                                   self.organization_target[0][split], reduction='sum')
@@ -137,8 +137,7 @@ class Assist:
             if cfg['assist_rate_mode'] == 'search':
                 input = {'history': self.organization_output[iter - 1]['train'],
                          'output': self.organization_output[iter]['train'],
-                         'target': self.organization_target[0]['train'],
-                         'dataset': cfg['data_name']}
+                         'target': self.organization_target[0]['train']}
                 input = to_device(input, cfg['device'])
                 model = models.linesearch().to(cfg['device'])
                 model.train(True)
@@ -170,8 +169,7 @@ class Assist:
             if cfg['assist_rate_mode'] == 'search':
                 input = {'history': self.organization_output[iter - 1]['train'],
                          'output': self.organization_output[iter]['train'],
-                         'target': self.organization_target[0]['train'],
-                         'dataset': cfg['data_name']}
+                         'target': self.organization_target[0]['train']}
                 input = to_device(input, cfg['device'])
                 model = models.linesearch().to(cfg['device'])
                 model.train(True)

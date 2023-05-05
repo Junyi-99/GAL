@@ -50,7 +50,7 @@ def runExperiment():
     torch.cuda.manual_seed(cfg['seed'])
     dataset = fetch_dataset(cfg['data_name'])
     process_dataset(dataset)
-    feature_split = split_dataset(cfg['num_users'])
+    feature_split = split_dataset(cfg['num_users'], dataset)
     assist = Assist(feature_split)
     organization = assist.make_organization()
     metric = Metric({'train': ['Loss'], 'test': ['Loss']})

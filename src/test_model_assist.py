@@ -71,7 +71,7 @@ def runExperiment():
     return
 
 
-def initialize(dataset, assist, organization, metric, logger, epoch):
+def initialize(dataset, assist, organization, metric, logger, epoch): # organization[0]
     logger.safe(True)
     initialization = organization.initialize(dataset, metric, logger)
     info = {'info': ['Model: {}'.format(cfg['model_tag']), 'Test Epoch: {}({:.0f}%)'.format(epoch, 100.)]}
