@@ -87,7 +87,7 @@ def split_dataset(num_users, dataset):
             -1, cfg['data_shape'][0], cfg['data_shape'][1] // n_h, cfg['data_shape'][2] // n_w)
         feature_split = list(feature_split.reshape(feature_split.size(0), -1))
     elif cfg['data_name'] in ['MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
-        p = dataset.partitions
+        p = dataset['train'].partitions
         feature_split = [
             torch.arange(sum(p[:0]) , sum(p[: 1]), dtype=torch.int),
             torch.arange(sum(p[:1]) , sum(p[: 2]), dtype=torch.int),             

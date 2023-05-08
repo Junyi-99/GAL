@@ -113,18 +113,22 @@ def recur(fn, input, *args):
 def process_dataset(dataset):
     cfg['target_size'] = dataset['train'].target_size
     cfg['data_size'] = {split: len(dataset[split]) for split in dataset}
+    data_shape = {'Blob': [10], 'Iris': [4], 'Diabetes': [10], 'BostonHousing': [13], 'Wine': [13],
+                  'BreastCancer': [30], 'QSAR': [41], 'MNIST': [1, 28, 28], 'CIFAR10': [3, 32, 32],
+                  'ModelNet40': [3, 32, 32, 12], 'ShapeNet55': [3, 32, 32, 12], 'MIMICL': [22], 'MIMICM': [22], }
+    
+    if cfg['data_name'] in ['CovType','MSD','Higgs','Gisette','Realsim','Epsilon','Letter','Radar']:
+        cfg['data_shape'] = [np.sum(dataset['train'].partitions)]
+    else:
+        cfg['data_shape'] = data_shape[cfg['data_name']]
+        
     if cfg['data_name'] in ['MIMICL', 'MIMICM']:
         cfg['data_length'] = {split: dataset[split].length for split in dataset}
     return
 
 
 def process_control():
-    data_shape = {'Blob': [10], 'Iris': [4], 'Diabetes': [10], 'BostonHousing': [13], 'Wine': [13],
-                  'BreastCancer': [30], 'QSAR': [41], 'MNIST': [1, 28, 28], 'CIFAR10': [3, 32, 32],
-                  'ModelNet40': [3, 32, 32, 12], 'ShapeNet55': [3, 32, 32, 12], 'MIMICL': [22], 'MIMICM': [22], 
-
-                   'CovType': [54], 'MSD': [90],'Higgs': [28], 'Gisette': [5000], 'Realsim':[20958],'Epsilon':[2000], 'Letter': [16], 'Radar':[174]}
-    cfg['data_shape'] = data_shape[cfg['data_name']]
+    
     cfg['linear'] = {}
     cfg['classifier'] = {}
     cfg['conv'] = {'hidden_size': [64, 128, 256, 512]}
@@ -190,7 +194,7 @@ def process_control():
         cfg[model_name]['momentum'] = 0.9
         cfg[model_name]['weight_decay'] = 5e-4
         cfg[model_name]['batch_size'] = {'train': 1024, 'test': 1024}
-        cfg[model_name]['lr'] = 0.1
+        cfg[model_name]['lr'] = float(os.environ.get("LR", "0.01"))
         cfg[model_name]['num_epochs'] = cfg['local_epoch']
         cfg[model_name]['scheduler_name'] = 'MultiStepLR'
         cfg[model_name]['factor'] = 0.1

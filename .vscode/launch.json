@@ -4,112 +4,254 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "name": "测试数据集",
+            "type": "python",
+            "request": "launch",
+            "program": "testdataset.py",
+            "cwd": "${workspaceFolder}/src",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
         {
             "name": "GAL (buston)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "BostonHousing", "--model_name", "linear", "--control_name", "4_stack_100_10_search_0", "--init_seed", "0"],
+            "args": [
+                "--data_name",
+                "BostonHousing",
+                "--model_name",
+                "linear",
+                "--control_name",
+                "4_stack_100_10_search_0",
+                "--init_seed",
+                "0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true
-        },{
+        },
+        {
             "name": "GAL (MSD)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "MSD", "--model_name", "linear", "--control_name", "4_stack_1_1_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "MSD",
+                "--model_name",
+                "linear",
+                "--control_name",
+                "4_stack_1_1_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "env": {
                 "CUDA_VISIBLE_DEVICES": "2"
             },
             "justMyCode": true
-        },{
+        },
+        {
             "name": "GAL (CovType)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "CovType", "--model_name", "classifier", "--control_name", "4_stack_10_10_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "CovType",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_10_10_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true
-        },{
+        },
+        {
             "name": "GAL (MNIST)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "MNIST", "--model_name", "conv", "--control_name", "4_stack_10_10_search_0", "--init_seed", "0"],
+            "args": [
+                "--data_name",
+                "MNIST",
+                "--model_name",
+                "conv",
+                "--control_name",
+                "4_stack_10_10_search_0",
+                "--init_seed",
+                "0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true
-        },{
+        },
+        {
             "name": "GAL (Letter 26分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Letter", "--model_name", "classifier", "--control_name", "4_stack_30_20_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "Letter",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_30_20_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true
-        },{
+        },
+        {
             "name": "玩😻",
             "type": "python",
             "request": "launch",
             "program": "junyiplay.py",
             "cwd": "${workspaceFolder}/src",
-        },{
+        },
+        {
             "name": "GAL (Radar 七分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Radar", "--model_name", "classifier", "--control_name", "4_stack_50_50_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "Radar",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_50_50_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true
-        },{
+        },
+        {
             "name": "GAL (Epsilon 二分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Epsilon", "--model_name", "classifier", "--control_name", "4_stack_1_1_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0", "--dataseed", "2"],
+            "args": [
+                "--data_name",
+                "Epsilon",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_1_1_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "imp",
+                "--weight",
+                "1.0",
+                "--dataseed",
+                "2"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true,
             "env": {
                 "CUDA_VISIBLE_DEVICES": "0"
             },
-        },{
+        },
+        {
             "name": "GAL (Gisette 二分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Gisette", "--model_name", "classifier", "--control_name", "4_stack_1_1_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "Gisette",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_1_1_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true,
             "env": {
                 "CUDA_VISIBLE_DEVICES": "1"
             },
-        },{
+        },
+        {
             "name": "GAL (Realsim 二分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Realsim", "--model_name", "classifier", "--control_name", "4_stack_4_4_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "Realsim",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_4_4_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true,
             "env": {
                 "CUDA_VISIBLE_DEVICES": "2"
             },
-        },{
+        },
+        {
             "name": "GAL (Higgs 二分类)",
             "type": "python",
             "request": "launch",
             "program": "train_model_assist.py",
-            "args": ["--data_name", "Higgs", "--model_name", "classifier", "--control_name", "4_stack_1_1_search_0", "--init_seed", "0", "--splitter", "corr", "--weight", "1.0"],
+            "args": [
+                "--data_name",
+                "Higgs",
+                "--model_name",
+                "classifier",
+                "--control_name",
+                "4_stack_1_1_search_0",
+                "--init_seed",
+                "0",
+                "--splitter",
+                "corr",
+                "--weight",
+                "1.0"
+            ],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",
             "justMyCode": true,
@@ -117,6 +259,5 @@
                 "CUDA_VISIBLE_DEVICES": "3"
             },
         }
-
     ]
 }

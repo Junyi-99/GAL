@@ -12,10 +12,11 @@ class Linear(nn.Module):
         super().__init__()
         input_size = np.prod(data_shape).item()
         self.linear1 = nn.Linear(input_size, 100)
-        self.relu = nn.ReLU()
         self.linear2 = nn.Linear(100, 100)
         self.linear3 = nn.Linear(100, target_size)
+        
         self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
 
     def feature(self, input):
         x = input['data']
