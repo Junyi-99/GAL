@@ -10,7 +10,7 @@ from itertools import repeat
 from torchvision.utils import save_image
 from config import cfg
 from torch.nn.utils.rnn import pad_sequence
-
+import datetime, pytz
 
 def check_exists(path):
     return os.path.exists(path)
@@ -193,12 +193,12 @@ def process_control():
         cfg[model_name]['optimizer_name'] = 'SGD'
         cfg[model_name]['momentum'] = 0.9
         cfg[model_name]['weight_decay'] = 5e-4
-        cfg[model_name]['batch_size'] = {'train': 1024, 'test': 1024}
-        cfg[model_name]['lr'] = float(os.environ.get("LR", "0.01"))
+        cfg[model_name]['batch_size'] = {'train': int(os.environ.get("BATCH_SIZE", "512")), 'test': int(os.environ.get("BATCH_SIZE", "512"))}
+        cfg[model_name]['lr'] = float(os.environ.get("LR", "0.00001"))
         cfg[model_name]['num_epochs'] = cfg['local_epoch']
         cfg[model_name]['scheduler_name'] = 'MultiStepLR'
         cfg[model_name]['factor'] = 0.1
-        cfg[model_name]['milestones'] = [50, 100]
+        cfg[model_name]['milestones'] = [2,4,6,8,10,12,14,16,18,20]
     elif model_name in ['classifier']:
         cfg[model_name]['optimizer_name'] = os.environ.get("OPTIMIZER", "Adam")
         cfg[model_name]['momentum'] = float(os.environ.get("MOMENTUM", "0.9"))
@@ -255,6 +255,7 @@ def process_control():
     cfg['global'] = {}
     cfg['global']['num_epochs'] = cfg['global_epoch']
     cfg['stats'] = make_stats()
+    print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), "Learning rate:", cfg[model_name]['lr'])
     return
 
 
@@ -340,7 +341,7 @@ def resume(model_tag, load_tag='checkpoint', verbose=True):
     if os.path.exists('./output/model/{}_{}.pt'.format(model_tag, load_tag)):
         result = load('./output/model/{}_{}.pt'.format(model_tag, load_tag))
     else:
-        print('Not exists model tag: {}, start from scratch'.format(model_tag))
+        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), 'Not exists model tag: {}, start from scratch'.format(model_tag))
         from datetime import datetime
         from logger import Logger
         last_epoch = 1
@@ -348,7 +349,7 @@ def resume(model_tag, load_tag='checkpoint', verbose=True):
         logger = Logger(logger_path)
         result = {'epoch': last_epoch, 'logger': logger}
     if verbose:
-        print('Resume from {}'.format(result['epoch']))
+        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), 'Resume from {}'.format(result['epoch']))
     return result
 
 

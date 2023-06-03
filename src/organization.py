@@ -6,7 +6,8 @@ import torch
 import models
 from config import cfg
 from utils import to_device, make_optimizer, make_scheduler, collate
-
+import datetime
+import pytz
 
 class Organization:
     def __init__(self, organization_id, feature_split, model_name):
@@ -65,7 +66,7 @@ class Organization:
             logger.append(evaluation, 'train', n=input_size)
             info = {'info': ['Model: {}'.format(cfg['model_tag']), 'ID: {}'.format(self.organization_id)]}
             logger.append(info, 'train', mean=False)
-            print(logger.write('train', metric.metric_name['train']), end='\r', flush=True)
+            print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('train', metric.metric_name['train']), end='\r', flush=True)
             self.model_parameters[iter] = model
         else:
             model = eval('models.{}().to(cfg["device"])'.format(self.model_name[iter]))
@@ -101,9 +102,10 @@ class Organization:
                                  'Train Local Epoch: {}({:.0f}%)'.format(local_epoch, 100. * local_epoch /
                                                                          cfg[self.model_name[iter]]['num_epochs']),
                                  'ID: {}'.format(self.organization_id),
-                                 'Local Finished Time: {}'.format(local_finished_time)]}
+                                 'Local Finished Time: {}'.format(local_finished_time),
+                                 f'Learning Rate: {scheduler.get_lr()}']}
                 logger.append(info, 'train', mean=False)
-                print(logger.write('train', metric.metric_name['train']), end='\r', flush=True)
+                print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('train', metric.metric_name['train']), end='\r', flush=True)
             sys.stdout.write('\x1b[2K')
             self.model_parameters[iter] = model.to('cpu').state_dict()
         return

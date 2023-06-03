@@ -15,6 +15,7 @@ from metrics import Metric
 from assist import Assist
 from utils import save, load, process_control, process_dataset, resume
 from logger import make_logger
+import datetime, pytz
 
 cudnn.benchmark = True
 parser = argparse.ArgumentParser(description='cfg')
@@ -42,7 +43,7 @@ def main():
     for i in range(cfg['num_experiments']):
         model_tag_list = [str(seeds[i]), cfg['data_name'], cfg['model_name'], cfg['control_name'], cfg['splitter'], cfg['weight'], cfg['dataseed']]
         cfg['model_tag'] = '_'.join([x for x in model_tag_list if x])
-        print('Experiment: {}'.format(cfg['model_tag']))
+        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), 'Experiment: {}'.format(cfg['model_tag']))
         runExperiment()
     return
 
@@ -98,10 +99,10 @@ def initialize(dataset, assist, organization, metric, logger, epoch):
     info = {'info': ['Model: {}'.format(cfg['model_tag']),
                      'Train Epoch: {}'.format(epoch), 'ID: 1']}
     logger.append(info, 'train', mean=False)
-    print(logger.write('train', metric.metric_name['train']))
+    print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('train', metric.metric_name['train']))
     info = {'info': ['Model: {}'.format(cfg['model_tag']), 'Test Epoch: {}({:.0f}%)'.format(epoch, 100.)]}
     logger.append(info, 'test', mean=False)
-    print(logger.write('test', metric.metric_name['test']))
+    print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('test', metric.metric_name['test']))
     for split in dataset:
         assist.organization_output[0][split] = initialization[split]
         if cfg['data_name'] in ['MIMICL', 'MIMICM']:
@@ -129,7 +130,7 @@ def train(data_loader, organization, metric, logger, epoch):
                              'Epoch Finished Time: {}'.format(epoch_finished_time),
                              'Experiment Finished Time: {}'.format(exp_finished_time)]}
             logger.append(info, 'train', mean=False)
-            print(logger.write('train', metric.metric_name['train']))
+            print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('train', metric.metric_name['train']))
     return
 
 
@@ -157,7 +158,7 @@ def test(assist, metric, logger, epoch):
         logger.append(evaluation, 'test', n=input_size)
         info = {'info': ['Model: {}'.format(cfg['model_tag']), 'Test Epoch: {}({:.0f}%)'.format(epoch, 100.)]}
         logger.append(info, 'test', mean=False)
-        print(logger.write('test', metric.metric_name['test']))
+        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), logger.write('test', metric.metric_name['test']))
     return
 
 

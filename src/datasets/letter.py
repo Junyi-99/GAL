@@ -27,7 +27,6 @@ def get_dataset(party_id:int, typ:str, value:str, train: str, dataseed: str):
     return pickle.load(open(f"/data/zhaomin/VertiBench/data/syn/letter/{fname}", "rb"))
 
 class Letter(Dataset):
-    # 二分类任务
     def __init__(self, root, split, typ: str, val:str, dataseed: str) -> None:
         super().__init__()
         self.root = os.path.expanduser(root)
@@ -35,8 +34,6 @@ class Letter(Dataset):
         # split: train, test
         # typ: corr, imp
         # val: 0.1, 0.3, 0.5, 0.7, 0.9
-
-
         self.parties = [None, None, None, None]
         self.parties[0] = get_dataset(0, typ, val, split, dataseed) # (12000,4)
         self.parties[1] = get_dataset(1, typ, val, split, dataseed) # (12000,4)

@@ -233,31 +233,6 @@
                 "CUDA_VISIBLE_DEVICES": "2"
             },
         },
-        {
-            "name": "GAL (Higgs 二分类)",
-            "type": "python",
-            "request": "launch",
-            "program": "train_model_assist.py",
-            "args": [
-                "--data_name",
-                "Higgs",
-                "--model_name",
-                "classifier",
-                "--control_name",
-                "4_stack_1_1_search_0",
-                "--init_seed",
-                "0",
-                "--splitter",
-                "corr",
-                "--weight",
-                "1.0"
-            ],
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/src",
-            "justMyCode": true,
-            "env": {
-                "CUDA_VISIBLE_DEVICES": "3"
-            },
-        }
+       
     ]
 }
