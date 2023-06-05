@@ -1,3 +1,5 @@
+# VertiBench Scalibility Test
+
 import os
 import sys
 import argparse 
@@ -71,17 +73,8 @@ if __name__ == "__main__":
                     model = 'classifier'
                     control = '4_stack_20_20_search_0'
                 
-                folder = f'./results/{dataset}_{model}_lr{lr}_{control}_seed{seed}'
-                # if folder not in [
-                #     './results/MSD_linear_lr0.01_4_stack_20_5_search_0_seed3',
-                #     './results/MSD_linear_lr0.01_4_stack_20_5_search_0_seed0',
-                #     './results/MSD_linear_lr0.01_4_stack_20_5_search_0_seed4',
-                #     './results/Epsilon_classifier_lr0.01_4_stack_20_20_search_0_seed4',
-                #     './results/Radar_classifier_lr0.01_4_stack_20_20_search_0_seed4',
-                #     './results/MSD_linear_lr0.01_4_stack_20_5_search_0_seed1',
-                #     './results/MSD_linear_lr0.01_4_stack_20_5_search_0_seed2'
-                # ]:
-                #     continue
+                folder = f'./results_scale_test/{dataset}_{model}_lr{lr}_{control}_seed{seed}'
+
                 os.system(f'mkdir -p {folder}')
                 commands = get_commands(folder, lr, seed, dataset, model, control)
                 for cmd in commands:
@@ -91,4 +84,4 @@ if __name__ == "__main__":
     pool.close()
     pool.join()
 
-# python run.py -s 0 1 2 3 4 -g 0 1 2 3 -t 4 -d CovType MSD Gisette Realsim Epsilon Letter Radar -lr 0.01
+# python run.py -s 0 1 2 3 4 -g 0 1 2 3 -t 4 -d Gisette Realsim -lr 0.01

@@ -6,10 +6,10 @@ from datetime import datetime
 folder_path = "./"
 
 # 遍历文件夹中的所有文件
-for dir in os.listdir(folder_path):
+for dir in sorted(os.listdir(folder_path)):
     if not os.path.isdir(os.path.join(folder_path, dir)):
         continue
-    for filename in os.listdir(dir):
+    for filename in sorted(os.listdir(dir)):
         # 判断是否为 txt 文件
         if filename.endswith(".txt"):
             # 打开文件并读取所有行

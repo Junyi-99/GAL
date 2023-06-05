@@ -1,0 +1,62 @@
+Group: ('CovType', 'imp', '0.1'), Average Time: 2.162388888888889
+Group: ('CovType', 'imp', '1.0'), Average Time: 2.1136666666666666
+Group: ('CovType', 'imp', '10.0'), Average Time: 2.178722222222222
+Group: ('CovType', 'imp', '100.0'), Average Time: 2.2006666666666668
+Group: ('CovType', 'corr', '0.0'), Average Time: 2.204222222222222
+Group: ('CovType', 'corr', '0.3'), Average Time: 2.149277777777778
+Group: ('CovType', 'corr', '0.6'), Average Time: 2.2483333333333335
+Group: ('CovType', 'corr', '1.0'), Average Time: 2.181722222222222
+
+Group: ('Epsilon', 'imp', '0.1'), Average Time: 1.7946666666666666
+Group: ('Epsilon', 'imp', '1.0'), Average Time: 1.8226666666666667
+Group: ('Epsilon', 'imp', '10.0'), Average Time: 1.8035555555555556
+Group: ('Epsilon', 'imp', '100.0'), Average Time: 1.8040555555555557
+Group: ('Epsilon', 'corr', '0.0'), Average Time: 1.7455
+Group: ('Epsilon', 'corr', '0.3'), Average Time: 1.7845555555555555
+Group: ('Epsilon', 'corr', '0.6'), Average Time: 1.777388888888889
+Group: ('Epsilon', 'corr', '1.0'), Average Time: 1.769888888888889
+
+Group: ('Gisette', 'imp', '0.1'), Average Time: 0.034555555555555555
+Group: ('Gisette', 'imp', '1.0'), Average Time: 0.03372222222222222
+Group: ('Gisette', 'imp', '10.0'), Average Time: 0.03227777777777778
+Group: ('Gisette', 'imp', '100.0'), Average Time: 0.03161111111111111
+Group: ('Gisette', 'corr', '0.0'), Average Time: 0.034555555555555555
+Group: ('Gisette', 'corr', '0.3'), Average Time: 0.03294444444444444
+Group: ('Gisette', 'corr', '0.6'), Average Time: 0.033499999999999995
+Group: ('Gisette', 'corr', '1.0'), Average Time: 0.03283333333333333
+
+Group: ('Letter', 'imp', '0.1'), Average Time: 0.06355555555555556
+Group: ('Letter', 'imp', '1.0'), Average Time: 0.0628888888888889
+Group: ('Letter', 'imp', '10.0'), Average Time: 0.06511111111111112
+Group: ('Letter', 'imp', '100.0'), Average Time: 0.06316666666666666
+Group: ('Letter', 'corr', '0.0'), Average Time: 0.06477777777777778
+Group: ('Letter', 'corr', '0.3'), Average Time: 0.06205555555555556
+Group: ('Letter', 'corr', '0.6'), Average Time: 0.06338888888888888
+Group: ('Letter', 'corr', '1.0'), Average Time: 0.06261111111111112
+
+Group: ('Radar', 'corr', '0.0'), Average Time: 1.311222222222222
+Group: ('Radar', 'corr', '0.3'), Average Time: 1.3045555555555555
+Group: ('Radar', 'corr', '0.6'), Average Time: 1.3082777777777779
+Group: ('Radar', 'corr', '1.0'), Average Time: 1.3006666666666666
+Group: ('Radar', 'imp', '0.1'), Average Time: 1.3123333333333331
+Group: ('Radar', 'imp', '1.0'), Average Time: 1.3079444444444446
+Group: ('Radar', 'imp', '10.0'), Average Time: 1.299888888888889
+Group: ('Radar', 'imp', '100.0'), Average Time: 1.3333888888888887
+
+Group: ('Realsim', 'imp', '0.1'), Average Time: 1.4427777777777777
+Group: ('Realsim', 'imp', '1.0'), Average Time: 1.4285
+Group: ('Realsim', 'imp', '10.0'), Average Time: 1.4597222222222221
+Group: ('Realsim', 'imp', '100.0'), Average Time: 1.3438333333333334
+Group: ('Realsim', 'corr', '0.0'), Average Time: 1.3458333333333334
+Group: ('Realsim', 'corr', '0.3'), Average Time: 1.397388888888889
+Group: ('Realsim', 'corr', '0.6'), Average Time: 1.3768333333333334
+Group: ('Realsim', 'corr', '1.0'), Average Time: 1.4352777777777779
+
+Group: ('MSD', 'imp', '0.1'), Average Time: 1.9468333333333334
+Group: ('MSD', 'imp', '1.0'), Average Time: 2.083833333333333
+Group: ('MSD', 'imp', '10.0'), Average Time: 2.0850555555555554
+Group: ('MSD', 'imp', '100.0'), Average Time: 1.9119444444444444
+Group: ('MSD', 'corr', '0.0'), Average Time: 2.081888888888889
+Group: ('MSD', 'corr', '0.3'), Average Time: 2.0768333333333335
+Group: ('MSD', 'corr', '0.6'), Average Time: 1.9157777777777778
+Group: ('MSD', 'corr', '1.0'), Average Time: 1.9518333333333335
