@@ -192,11 +192,11 @@
                 "--model_name",
                 "classifier",
                 "--control_name",
-                "4_stack_1_1_search_0",
+                "8_stack_2_2_search_0",
                 "--init_seed",
                 "0",
                 "--splitter",
-                "corr",
+                "imp",
                 "--weight",
                 "1.0"
             ],

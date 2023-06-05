@@ -29,10 +29,10 @@ def fetch_dataset(data_name, args, verbose=True):
         dataset['train'] = eval('datasets.{}(root=root, split=\'train\')'.format(data_name))
         dataset['test'] = eval('datasets.{}(root=root, split=\'test\')'.format(data_name))
     elif data_name in ['MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
-        dataset['train'] = eval(f"datasets.{data_name}(root=root, split='train', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}')")
-        dataset['test'] = eval(f"datasets.{data_name}(root=root, split='test', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}')")
+        dataset['train'] = eval(f"datasets.{data_name}(split='train', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}', num_clients={args['num_clients']})")
+        dataset['test'] = eval(f"datasets.{data_name}(split='test', typ='{args['splitter']}', val='{args['weight']}', dataseed='{args['dataseed']}', num_clients={args['num_clients']})")
     else:
-        raise ValueError('Not valid dataset name')
+        raise ValueError('Not a valid dataset name')
     if verbose:
         print('data ready')
     return dataset
@@ -87,12 +87,11 @@ def split_dataset(num_users, dataset):
             -1, cfg['data_shape'][0], cfg['data_shape'][1] // n_h, cfg['data_shape'][2] // n_w)
         feature_split = list(feature_split.reshape(feature_split.size(0), -1))
     elif cfg['data_name'] in ['MSD', 'CovType', 'Higgs', 'Gisette', 'Letter', 'Radar', 'Epsilon', 'Realsim']:
+        assert cfg['num_users'] == len(dataset['train'].partitions)
         p = dataset['train'].partitions
+        
         feature_split = [
-            torch.arange(sum(p[:0]) , sum(p[: 1]), dtype=torch.int),
-            torch.arange(sum(p[:1]) , sum(p[: 2]), dtype=torch.int),             
-            torch.arange(sum(p[:2]) , sum(p[: 3]), dtype=torch.int),
-            torch.arange(sum(p[:3]) , sum(p[: 4]), dtype=torch.int)
+            torch.arange(sum(p[:i]) , sum(p[: i+1]), dtype=torch.int) for i in range(len(p))
         ]
     else:
         raise ValueError('Not valid data name')

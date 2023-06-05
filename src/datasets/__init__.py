@@ -11,14 +11,20 @@ from .cifar import CIFAR10
 from .modelnet import ModelNet40
 from .shapenet import ShapeNet55
 
-from .msd import MSD
 from .covtype import CovType
-from .higgs import Higgs
-from .gisette import Gisette
-from .realsim import Realsim
 from .epsilon import Epsilon
+from .gisette import Gisette
+from .higgs import Higgs
 from .letter import Letter
+from .msd import MSD
 from .radar import Radar
+from .realsim import Realsim
+
+from os.path import dirname, abspath, join
+import sys
+
+dir_path = dirname(dirname(abspath(__file__)))
+sys.path.append(join(dir_path, 'vertibench'))
 
 from .utils import *
 __all__ = ('Blob', 'Iris', 'Diabetes', 'BostonHousing', 'Wine', 'BreastCancer', 'QSAR', 'MIMICL', 'MIMICM'

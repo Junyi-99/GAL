@@ -36,6 +36,7 @@ cfg['control_name'] = '_'.join(
     [cfg['control'][k] for k in cfg['control'] if cfg['control'][k]]) if 'control' in cfg else ''
 
 cfg['splitter'], cfg['weight'], cfg['dataseed'] = args['splitter'], args['weight'], args['dataseed']
+args['num_clients'] = cfg['control']['num_users'] # for later dataset.eval use.
 
 def main():
     process_control()
