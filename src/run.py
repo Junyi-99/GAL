@@ -16,8 +16,24 @@ def process_wrapper(gpuid_queue, command, times):
 
         # timestamp = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
         cmd = f"CUDA_VISIBLE_DEVICES={gpu_idx} " + command + f'_final_repeat{times}.txt 2>&1'
-        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), "Running command: ", cmd)
-        subprocess.call(cmd, shell=True)
+        pos1 = cmd.find('> ')
+        log_file_name = cmd[pos1 + 2: -5]
+        
+        # read log_file_name and check wether "Test Epoch: 20" in the log
+        already_run = False
+        if os.path.exists(log_file_name):
+            with open(log_file_name, 'r') as f:
+                lines = f.readlines()
+                for line in lines:
+                    if 'Test Epoch: 20' in line:
+                        already_run = True
+                        break
+
+        if already_run:
+            print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), "✅ Already run: ", cmd)
+        else:
+            print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), "🟡 Running command: ", cmd)
+            # subprocess.call(cmd, shell=True)
         gpuid_queue.put(gpu_idx)
         break
     gpuid_queue.close()
@@ -85,7 +101,11 @@ if __name__ == "__main__":
                     model = 'classifier'
                     control = f'{num_clients}_stack_{local_epoch}_{total_epoch}_search_0'
                 
-                folder = f'./results_scale_test/{dataset}_client{num_clients}_lr{lr}_seed{seed}_local{local_epoch}_global{total_epoch}_bs{batch_size}'
+                if scale_test:
+                    folder = f'./results_scale_test/{dataset}_client{num_clients}_lr{lr}_seed{seed}_local{local_epoch}_global{total_epoch}_bs{batch_size}'
+                else:
+                    folder = f'./results_test/{dataset}_client{num_clients}_lr{lr}_seed{seed}_local{local_epoch}_global{total_epoch}_bs{batch_size}'
+
                 os.system(f'mkdir -p {folder}')
                 commands = get_commands(folder, lr, seed, dataset, model, control, batch_size, scale_test)
                 for cmd in commands:
@@ -96,3 +116,52 @@ if __name__ == "__main__":
     pool.join()
 
 # python run.py -s 0 1 2 3 4 -g 0 1 2 3 -t 4 -d CovType MSD Gisette Realsim Epsilon Letter Radar -lr 0.01
+
+"""
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 2 --ntask 1 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 8 --ntask 1 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 32 --ntask 1 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 128 --ntask 2 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+✅ python run.py --seeds 0 1 2 3 4 --gpus 1 --clients 512 --ntask 4 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+
+🟣 python run.py --seeds 0 1 2 3 4 --gpus 4 --clients 2048 --ntask 1 -d Gisette -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 2 --ntask 2 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+✅ python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 8 --ntask 2 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+🟣 python run.py --seeds 0 1 2 3 4 --gpus 3 --clients 32 --ntask 3 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+🟣 python run.py --seeds 0 1 2 3 4 --gpus 0 --clients 128 --ntask 3 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+🟡 python run.py --seeds 0 1 2 3 4 --gpus 1 --clients 512 --ntask 5 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+🔴 python run.py --seeds 0 1 2 3 4 --gpus 3 --clients 2048 --ntask 5 -d Realsim -lr 0.01 -l 20 -e 20 -b 512 --scale-test=True &
+"""
+
+"""
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 0 --splitter imp --weight 1.0 --dataseed 0 > ./results_scale_test/Realsim_client512_lr0.01_seed0_local20_global20_bs512/imp_1.0.log_final_repeat0.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 1 --splitter imp --weight 1.0 --dataseed 1 > ./results_scale_test/Realsim_client512_lr0.01_seed1_local20_global20_bs512/imp_1.0.log_final_repeat1.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 2 --splitter imp --weight 1.0 --dataseed 2 > ./results_scale_test/Realsim_client512_lr0.01_seed2_local20_global20_bs512/imp_1.0.log_final_repeat2.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=1 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 3 --splitter imp --weight 1.0 --dataseed 3 > ./results_scale_test/Realsim_client512_lr0.01_seed3_local20_global20_bs512/imp_1.0.log_final_repeat3.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=1 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 4 --splitter imp --weight 1.0 --dataseed 4 > ./results_scale_test/Realsim_client512_lr0.01_seed4_local20_global20_bs512/imp_1.0.log_final_repeat4.txt 2>&1 &
+
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Gisette --model_name classifier --control_name 2048_stack_20_20_search_0 --init_seed 0 --splitter imp --weight 1.0 --dataseed 0 > ./results_scale_test/Gisette_client2048_lr0.01_seed0_local20_global20_bs512/imp_1.0.log_final_repeat0.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Gisette --model_name classifier --control_name 2048_stack_20_20_search_0 --init_seed 1 --splitter imp --weight 1.0 --dataseed 1 > ./results_scale_test/Gisette_client2048_lr0.01_seed1_local20_global20_bs512/imp_1.0.log_final_repeat1.txt 2>&1 &
+🟡 CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Gisette --model_name classifier --control_name 2048_stack_20_20_search_0 --init_seed 2 --splitter imp --weight 1.0 --dataseed 2 > ./results_scale_test/Gisette_client2048_lr0.01_seed2_local20_global20_bs512/imp_1.0.log_final_repeat2.txt 2>&1 &
+✅ CUDA_VISIBLE_DEVICES=2 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Gisette --model_name classifier --control_name 2048_stack_20_20_search_0 --init_seed 3 --splitter imp --weight 1.0 --dataseed 3 > ./results_scale_test/Gisette_client2048_lr0.01_seed3_local20_global20_bs512/imp_1.0.log_final_repeat3.txt 2>&1 &
+✅ CUDA_VISIBLE_DEVICES=3 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Gisette --model_name classifier --control_name 2048_stack_20_20_search_0 --init_seed 4 --splitter imp --weight 1.0 --dataseed 4 > ./results_scale_test/Gisette_client2048_lr0.01_seed4_local20_global20_bs512/imp_1.0.log_final_repeat4.txt 2>&1 &
+
+正在跑 🏃 ⬆️
+
+✅ CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 32_stack_20_20_search_0 --init_seed 3 --splitter imp --weight 1.0 --dataseed 3 > ./results_scale_test/Realsim_client32_lr0.01_seed3_local20_global20_bs512/imp_1.0.log_final_repeat3.txt 2>&1 &
+✅ CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 32_stack_20_20_search_0 --init_seed 2 --splitter imp --weight 1.0 --dataseed 2 > ./results_scale_test/Realsim_client32_lr0.01_seed2_local20_global20_bs512/imp_1.0.log_final_repeat2.txt 2>&1 &
+✅ CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 32_stack_20_20_search_0 --init_seed 4 --splitter imp --weight 1.0 --dataseed 4 > ./results_scale_test/Realsim_client32_lr0.01_seed4_local20_global20_bs512/imp_1.0.log_final_repeat4.txt 2>&1 &
+
+✅ CUDA_VISIBLE_DEVICES=1 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 128_stack_20_20_search_0 --init_seed 0 --splitter imp --weight 1.0 --dataseed 0 > ./results_scale_test/Realsim_client128_lr0.01_seed0_local20_global20_bs512/imp_1.0.log_final_repeat0.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=1 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 128_stack_20_20_search_0 --init_seed 1 --splitter imp --weight 1.0 --dataseed 1 > ./results_scale_test/Realsim_client128_lr0.01_seed1_local20_global20_bs512/imp_1.0.log_final_repeat1_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=2 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 128_stack_20_20_search_0 --init_seed 2 --splitter imp --weight 1.0 --dataseed 2 > ./results_scale_test/Realsim_client128_lr0.01_seed2_local20_global20_bs512/imp_1.0.log_final_repeat2_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=3 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 128_stack_20_20_search_0 --init_seed 3 --splitter imp --weight 1.0 --dataseed 3 > ./results_scale_test/Realsim_client128_lr0.01_seed3_local20_global20_bs512/imp_1.0.log_final_repeat3_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 128_stack_20_20_search_0 --init_seed 4 --splitter imp --weight 1.0 --dataseed 4 > ./results_scale_test/Realsim_client128_lr0.01_seed4_local20_global20_bs512/imp_1.0.log_final_repeat4_resume.txt 2>&1 &
+
+🏃 CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 0 --splitter imp --weight 1.0 --dataseed 0 > ./results_scale_test/Realsim_client512_lr0.01_seed0_local20_global20_bs512/imp_1.0.log_final_repeat0_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=1 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 1 --splitter imp --weight 1.0 --dataseed 1 > ./results_scale_test/Realsim_client512_lr0.01_seed1_local20_global20_bs512/imp_1.0.log_final_repeat1_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=2 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 2 --splitter imp --weight 1.0 --dataseed 2 > ./results_scale_test/Realsim_client512_lr0.01_seed2_local20_global20_bs512/imp_1.0.log_final_repeat2_resume.txt 2>&1 &
+🏃 CUDA_VISIBLE_DEVICES=3 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 3 --splitter imp --weight 1.0 --dataseed 3 > ./results_scale_test/Realsim_client512_lr0.01_seed3_local20_global20_bs512/imp_1.0.log_final_repeat3_resume.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 BATCH_SIZE=512 LR=0.01 python train_model_assist.py --data_name Realsim --model_name classifier --control_name 512_stack_20_20_search_0 --init_seed 4 --splitter imp --weight 1.0 --dataseed 4 > ./results_scale_test/Realsim_client512_lr0.01_seed4_local20_global20_bs512/imp_1.0.log_final_repeat4_resume.txt 2>&1 &
+"""

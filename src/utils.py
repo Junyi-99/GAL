@@ -339,10 +339,12 @@ def make_scheduler(optimizer, tag):
 
 def resume(model_tag, load_tag='checkpoint', verbose=True):
     if os.path.exists('./output/model/{}_{}.pt'.format(model_tag, load_tag)):
+        print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), 'Resume from {}'.format(load_tag))
         result = load('./output/model/{}_{}.pt'.format(model_tag, load_tag))
     else:
         print(datetime.datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%Y-%m-%d %H:%M:%S"), 'Not exists model tag: {}, start from scratch'.format(model_tag))
-        from datetime import datetime
+        exit(0)
+        
         from logger import Logger
         last_epoch = 1
         logger_path = 'output/runs/train_{}_{}'.format(cfg['model_tag'], datetime.now().strftime('%b%d_%H-%M-%S'))

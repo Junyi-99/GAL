@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "load_test",
+            "type": "python",
+            "request": "launch",
+            "program": "load_test.py",
+            "cwd": "${workspaceFolder}/src",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "测试数据集",
             "type": "python",
             "request": "launch",

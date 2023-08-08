@@ -1,6 +1,5 @@
 import argparse
 import copy
-import datetime
 import models
 import os
 import sys
@@ -37,7 +36,7 @@ cfg['control_name'] = '_'.join(
 
 cfg['splitter'], cfg['weight'], cfg['dataseed'] = args['splitter'], args['weight'], args['dataseed']
 args['num_clients'] = cfg['control']['num_users'] # for later dataset.eval use.
-
+cfg['resume_mode'] = 1
 def main():
     process_control()
     seeds = list(range(cfg['init_seed'], cfg['init_seed'] + cfg['num_experiments']))
@@ -83,12 +82,12 @@ def runExperiment():
         assist.update(organization_outputs, epoch)
         test(assist, metric, logger, epoch)
         logger.safe(False)
-        save_result = {'cfg': cfg, 'epoch': epoch + 1, 'assist': assist, 'organization': organization, 'logger': logger}
-        save(save_result, './output/model/{}_checkpoint.pt'.format(cfg['model_tag']))
-        if metric.compare(logger.mean['test/{}'.format(metric.pivot_name)]):
-            metric.update(logger.mean['test/{}'.format(metric.pivot_name)])
-            shutil.copy('./output/model/{}_checkpoint.pt'.format(cfg['model_tag']),
-                        './output/model/{}_best.pt'.format(cfg['model_tag']))
+        # save_result = {'cfg': cfg, 'epoch': epoch + 1, 'assist': assist, 'organization': organization, 'logger': logger}
+        # save(save_result, './output/model/{}_checkpoint.pt'.format(cfg['model_tag']))
+        #if metric.compare(logger.mean['test/{}'.format(metric.pivot_name)]):
+        #    metric.update(logger.mean['test/{}'.format(metric.pivot_name)])
+        #    shutil.copy('./output/model/{}_checkpoint.pt'.format(cfg['model_tag']),
+        #                './output/model/{}_best.pt'.format(cfg['model_tag']))
         logger.reset()
     logger.safe(False)
     return
